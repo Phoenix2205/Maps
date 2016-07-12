@@ -14,8 +14,17 @@ import android.view.ViewGroup;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
-import kimhieu.me.anzi.dummy.DummyContent;
+import java.util.ArrayList;
+import java.util.List;
+
 import kimhieu.me.anzi.events.KeywordSubmitEvent;
+import kimhieu.me.anzi.models.google.LocationResponse;
+import kimhieu.me.anzi.models.google.Result;
+import kimhieu.me.anzi.network.GoogleApi;
+import kimhieu.me.anzi.network.GooglePlaceServiceGenerator;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * A fragment representing a list of Items.
@@ -30,6 +39,9 @@ public class GooglePlaceResultFragment extends Fragment {
     // TODO: Customize parameters
     private int mColumnCount = 1;
     private OnListFragmentInteractionListener mListener;
+    private static final String KEY="AIzaSyB3g3k8Hsc85LbMvV2wlddNY2Fw3Dj0adw";
+    private GooglePlaceResultRecyclerViewAdapter mAdapter;
+    public List<Result> resultList = new ArrayList<>();
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -57,10 +69,6 @@ public class GooglePlaceResultFragment extends Fragment {
         }
     }
 
-    @Subscribe
-    public void onEvent(KeywordSubmitEvent event) {
-
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -76,7 +84,8 @@ public class GooglePlaceResultFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new GooglePlaceResultRecyclerViewAdapter(DummyContent.ITEMS, mListener));
+            mAdapter = new GooglePlaceResultRecyclerViewAdapter(resultList, mListener,getActivity());
+            recyclerView.setAdapter(mAdapter);
         }
         return view;
     }
@@ -107,4 +116,27 @@ public class GooglePlaceResultFragment extends Fragment {
         super.onStop();
         EventBus.getDefault().unregister(this);
     }
+
+    @Subscribe
+    public void onEvent(KeywordSubmitEvent event) {
+        GoogleApi googleApi = GooglePlaceServiceGenerator.createService(GoogleApi.class);
+        Call<LocationResponse> call = googleApi.searchVenue("10.7960682,106.6760491","500",event.getmQuery(),KEY);
+        call.enqueue(new Callback<LocationResponse>() {
+            @Override
+            public void onResponse(Call<LocationResponse> call, Response<LocationResponse> response) {
+                Log.d("Success" , String.valueOf(response.body().getResults().size()));
+                resultList.clear();
+                resultList.addAll(response.body().getResults());
+                //        getPhoto();
+                mAdapter.notifyDataSetChanged();
+
+            }
+
+            @Override
+            public void onFailure(Call<LocationResponse> call, Throwable t) {
+                Log.d("Failure", t.getMessage());
+            }
+        });
+    }
+
 }

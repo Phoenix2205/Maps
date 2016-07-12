@@ -1,14 +1,17 @@
 package kimhieu.me.anzi;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.List;
 
 import kimhieu.me.anzi.dummy.DummyContent.DummyItem;
+import kimhieu.me.anzi.models.google.Result;
 
 /**
  * {@link RecyclerView.Adapter} that can display a {@link DummyItem} and makes a call to the
@@ -17,12 +20,13 @@ import kimhieu.me.anzi.dummy.DummyContent.DummyItem;
  */
 public class GooglePlaceResultRecyclerViewAdapter extends RecyclerView.Adapter<GooglePlaceResultRecyclerViewAdapter.ViewHolder> {
 
-    private final List<DummyItem> mValues;
+    private final List<Result> mValues;
     private final OnListFragmentInteractionListener mListener;
-
-    public GooglePlaceResultRecyclerViewAdapter(List<DummyItem> items, OnListFragmentInteractionListener listener) {
+    private final Context context;
+    public GooglePlaceResultRecyclerViewAdapter(List<Result> items, OnListFragmentInteractionListener listener, Context context) {
         mValues = items;
         mListener = listener;
+        this.context=context;
     }
 
     @Override
@@ -34,9 +38,9 @@ public class GooglePlaceResultRecyclerViewAdapter extends RecyclerView.Adapter<G
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        holder.mItem = mValues.get(position);
-        holder.mIdView.setText(mValues.get(position).id);
-        holder.mContentView.setText(mValues.get(position).content);
+        //holder.mItem = mValues.get(position);
+        holder.mIdView.setText(mValues.get(position).getName());
+        holder.mContentView.setText(mValues.get(position).getVicinity());
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -60,12 +64,14 @@ public class GooglePlaceResultRecyclerViewAdapter extends RecyclerView.Adapter<G
         public final TextView mIdView;
         public final TextView mContentView;
         public DummyItem mItem;
+        public final ImageView imageView;
 
         public ViewHolder(View view) {
             super(view);
             mView = view;
-            mIdView = (TextView) view.findViewById(R.id.id);
-            mContentView = (TextView) view.findViewById(R.id.content);
+            mIdView = (TextView) view.findViewById(R.id.google_text_view_name);
+            mContentView = (TextView) view.findViewById(R.id.google_text_view_address);
+            imageView=(ImageView)view.findViewById(R.id.google_image_view_place);
         }
 
         @Override

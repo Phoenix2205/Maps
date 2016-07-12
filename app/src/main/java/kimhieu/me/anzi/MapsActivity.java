@@ -22,7 +22,6 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import java.util.ArrayList;
 import java.util.List;
 
-import kimhieu.me.anzi.models.foursquare.Location;
 import kimhieu.me.anzi.models.foursquare.Venue;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
@@ -115,13 +114,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         // Add a marker in Sydney and move the camera
         LatLng currentLocation = new LatLng(10.7960682, 106.6760491);
-//        mMap.addMarker(new MarkerOptions().position(currentLocation).title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 16));
-        for (Venue v : list) {
-            Location l = v.getLocation();
-            LatLng latLng = new LatLng(l.getLat(), l.getLng());
-            mMap.addMarker(new MarkerOptions().position(latLng).title(v.getName()));
-        }
+        mMap.addMarker(new MarkerOptions().position(currentLocation).title("Marker in Sydney"));
+       mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 16));
+//        for (Venue v : list) {
+//            Location l = v.getLocation();
+//            LatLng latLng = new LatLng(l.getLat(), l.getLng());
+//            mMap.addMarker(new MarkerOptions().position(latLng).title(v.getName()));
+       // }
     }
 
     @Override

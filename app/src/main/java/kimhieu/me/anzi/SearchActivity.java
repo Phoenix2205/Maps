@@ -43,6 +43,8 @@ public class SearchActivity extends AppCompatActivity {
 
     private FoursquareResultFragment foursquareResultFragment;
 
+
+
     /**
      * The {@link ViewPager} that will host the section contents.
      */
@@ -104,6 +106,7 @@ public class SearchActivity extends AppCompatActivity {
         SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
         searchView.setOnQueryTextListener(mQueryTextListener);
+
 
         return true;
     }

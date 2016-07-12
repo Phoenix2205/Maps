@@ -1,10 +1,14 @@
 package kimhieu.me.anzi;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.bumptech.glide.Glide;
 
 import java.util.List;
 
@@ -17,13 +21,14 @@ import kimhieu.me.anzi.models.foursquare.Venue;
  * TODO: Replace the implementation with code for your data type.
  */
 public class FoursquareResultRecyclerViewAdapter extends RecyclerView.Adapter<FoursquareResultRecyclerViewAdapter.ViewHolder> {
-
+    private Context context;
     private final List<Venue> mValues;
     private final OnListFragmentInteractionListener mListener;
 
-    public FoursquareResultRecyclerViewAdapter(List<Venue> items, OnListFragmentInteractionListener listener) {
+    public FoursquareResultRecyclerViewAdapter(List<Venue> items, OnListFragmentInteractionListener listener, Context context) {
         mValues = items;
         mListener = listener;
+        this.context=context;
     }
 
     @Override
@@ -37,8 +42,9 @@ public class FoursquareResultRecyclerViewAdapter extends RecyclerView.Adapter<Fo
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
         holder.mIdView.setText(mValues.get(position).getName());
-        holder.mContentView.setText(mValues.get(position).getLocation().toString());
-
+        holder.mContentView.setText(mValues.get(position).getLocation().getFormattedAddress().toString());
+        if(mValues.get(position).getPhoto().getItems().size()!=0)
+        Glide.with(context).load(mValues.get(position).getPhoto().getItems().get(0).getUrl()).into(holder.imageView);
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -49,6 +55,8 @@ public class FoursquareResultRecyclerViewAdapter extends RecyclerView.Adapter<Fo
                 }
             }
         });
+
+
     }
 
     @Override
@@ -60,13 +68,15 @@ public class FoursquareResultRecyclerViewAdapter extends RecyclerView.Adapter<Fo
         public final View mView;
         public final TextView mIdView;
         public final TextView mContentView;
+        public final ImageView imageView;
         public Venue mItem;
 
         public ViewHolder(View view) {
             super(view);
             mView = view;
-            mIdView = (TextView) view.findViewById(R.id.id);
-            mContentView = (TextView) view.findViewById(R.id.content);
+            mIdView = (TextView) view.findViewById(R.id.foursquare_text_view_name);
+            mContentView = (TextView) view.findViewById(R.id.foursquare_text_view_address);
+            imageView=(ImageView)view.findViewById(R.id.foursquare_image_view_place);
         }
 
         @Override

@@ -20,6 +20,7 @@ import java.util.List;
 import kimhieu.me.anzi.events.KeywordSubmitEvent;
 import kimhieu.me.anzi.models.foursquare.FoursquareResponse;
 import kimhieu.me.anzi.models.foursquare.Venue;
+import kimhieu.me.anzi.models.foursquare_photo.PhotoResponse;
 import kimhieu.me.anzi.network.FoursquareApi;
 import kimhieu.me.anzi.network.FoursquareServiceGenerator;
 import retrofit2.Call;
@@ -42,7 +43,7 @@ public class FoursquareResultFragment extends Fragment {
     private FoursquareApi foursquareApi;
     public List<Venue> venueList = new ArrayList<>();
     private FoursquareResultRecyclerViewAdapter mAdapter;
-
+    private String APIversion="20130815";
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
@@ -83,7 +84,7 @@ public class FoursquareResultFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            mAdapter = new FoursquareResultRecyclerViewAdapter(venueList, mListener);
+            mAdapter = new FoursquareResultRecyclerViewAdapter(venueList, mListener,getActivity());
             recyclerView.setAdapter(mAdapter);
         }
         return view;
@@ -99,7 +100,9 @@ public class FoursquareResultFragment extends Fragment {
                 Log.d("Success" , String.valueOf(response.body().getResponse().getVenues().size()));
                 venueList.clear();
                 venueList.addAll(response.body().getResponse().getVenues());
-                mAdapter.notifyDataSetChanged();
+                getPhoto();
+
+
             }
 
             @Override
@@ -108,6 +111,33 @@ public class FoursquareResultFragment extends Fragment {
             }
         });
     }
+
+    private void getPhoto() {
+        for (int i=0;i<venueList.size();i++)
+        {
+            getPhotoFourSquare(venueList.get(i).getId(),i);
+        }
+    }
+
+    private void getPhotoFourSquare(String id, final int pos) {
+        foursquareApi = FoursquareServiceGenerator.createService(FoursquareApi.class);
+        Call<PhotoResponse>call=foursquareApi.getPhoto(id,"20130815");
+        call.enqueue(new Callback<PhotoResponse>() {
+            @Override
+            public void onResponse(Call<PhotoResponse> call, Response<PhotoResponse> response) {
+                Log.i("Get Photo",String.valueOf(response.body().getResponse().getPhotos().getCount()));
+                venueList.get(pos).setPhoto(response.body().getResponse().getPhotos());
+                mAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onFailure(Call<PhotoResponse> call, Throwable t) {
+                Log.i("Fail to get photo",t.getMessage());
+            }
+        });
+    }
+
+
 
     @Override
     public void onAttach(Context context) {

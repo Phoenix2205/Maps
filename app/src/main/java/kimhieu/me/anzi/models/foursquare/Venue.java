@@ -10,6 +10,8 @@ import com.google.gson.annotations.SerializedName;
 import java.util.ArrayList;
 import java.util.List;
 
+import kimhieu.me.anzi.models.foursquare_photo.Photos;
+
 public class Venue implements Parcelable {
 
     @SerializedName("id")
@@ -48,6 +50,17 @@ public class Venue implements Parcelable {
     @SerializedName("venueChains")
     @Expose
     private List<Object> venueChains = new ArrayList<Object>();
+
+    public Photos getPhoto() {
+        return photo;
+    }
+
+    public void setPhoto(Photos photo) {
+        this.photo = photo;
+    }
+
+    private Photos photo;
+
 
     protected Venue(Parcel in) {
         id = in.readString();
@@ -240,6 +253,8 @@ public class Venue implements Parcelable {
     public int describeContents() {
         return 0;
     }
+
+
 
     @Override
     public void writeToParcel(Parcel parcel, int i) {
