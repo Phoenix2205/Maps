@@ -20,6 +20,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -28,6 +29,8 @@ import java.util.List;
 
 import kimhieu.me.anzi.events.KeywordSubmitEvent;
 import kimhieu.me.anzi.models.foursquare.Venue;
+import kimhieu.me.anzi.models.google.Result;
+import kimhieu.me.anzi.network.GPSTracker;
 
 public class SearchActivity extends AppCompatActivity {
 
@@ -43,17 +46,33 @@ public class SearchActivity extends AppCompatActivity {
 
     private FoursquareResultFragment foursquareResultFragment;
 
+    private GooglePlaceResultFragment googlePlaceResultFragment;
 
+    SearchView searchView;
 
     /**
      * The {@link ViewPager} that will host the section contents.
      */
     private ViewPager mViewPager;
-
+//REMEMBER THIS Line
     private SearchView.OnQueryTextListener mQueryTextListener = new SearchView.OnQueryTextListener() {
         @Override
         public boolean onQueryTextSubmit(String query) {
-            EventBus.getDefault().post(new KeywordSubmitEvent(query));
+            GPSTracker gpsTracker=new GPSTracker(SearchActivity.this);
+            if(gpsTracker.canGetLocation()) {
+                double latitude=gpsTracker.getLatitude();
+                double longitude=gpsTracker.getLongtitude();
+                Toast.makeText( SearchActivity.this,"Your Location is - \nLat: " + latitude + "\nLong: " + longitude, Toast.LENGTH_LONG).show();
+                String currentLocation=String.valueOf(latitude)+","+String.valueOf(longitude);
+                EventBus.getDefault().post(new KeywordSubmitEvent(query,currentLocation));
+                searchView.clearFocus();
+//            InputMethodManager imm = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
+//            imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+            }
+            else
+            {
+                gpsTracker.showSettingAlert();
+            }
             return true;
         }
 
@@ -88,8 +107,10 @@ public class SearchActivity extends AppCompatActivity {
 //                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
 //                        .setAction("Action", null).show();
                 Intent intent = new Intent(SearchActivity.this, MapsActivity.class);
-                List<Venue> list = foursquareResultFragment.venueList;
-                intent.putParcelableArrayListExtra("list", (ArrayList<? extends Parcelable>) list);
+                List<Venue> foursquarelist = foursquareResultFragment.venueList;
+                intent.putParcelableArrayListExtra("foursquarelist", (ArrayList<? extends Parcelable>) foursquarelist);
+                List<Result>gglist=googlePlaceResultFragment.resultList;
+                intent.putParcelableArrayListExtra("googlelist",(ArrayList<?extends Parcelable>)gglist);
                 startActivity(intent);
             }
         });
@@ -103,7 +124,7 @@ public class SearchActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.menu_search, menu);
 
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
+        searchView  = (SearchView) menu.findItem(R.id.search).getActionView();
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
         searchView.setOnQueryTextListener(mQueryTextListener);
 
@@ -177,7 +198,8 @@ public class SearchActivity extends AppCompatActivity {
             // Return a PlaceholderFragment (defined as a static inner class below).
             switch (position) {
                 case 0:
-                    return GooglePlaceResultFragment.newInstance(1);
+                    googlePlaceResultFragment= GooglePlaceResultFragment.newInstance(1);
+                    return googlePlaceResultFragment;
                 case 1: {
                     foursquareResultFragment = FoursquareResultFragment.newInstance(1);
                     return foursquareResultFragment;

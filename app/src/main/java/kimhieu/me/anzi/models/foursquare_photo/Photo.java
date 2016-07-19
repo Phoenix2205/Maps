@@ -20,7 +20,8 @@ public class Photo {
      *     The prefix
      */
     public String getPrefix() {
-        return prefix=prefix.substring(0,prefix.length()-1);
+        //return prefix=prefix.substring(0,prefix.length()-1);
+        return prefix;
     }
 
     /**

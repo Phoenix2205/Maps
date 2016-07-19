@@ -1,6 +1,9 @@
 
 package kimhieu.me.anzi.models.google;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -8,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class Result {
+public class Result implements Parcelable{
 
     @SerializedName("geometry")
     @Expose
@@ -49,6 +52,30 @@ public class Result {
     @SerializedName("vicinity")
     @Expose
     private String vicinity;
+
+    protected Result(Parcel in) {
+        geometry = in.readParcelable(Geometry.class.getClassLoader());
+        icon = in.readString();
+        id = in.readString();
+        name = in.readString();
+        placeId = in.readString();
+        reference = in.readString();
+        scope = in.readString();
+        //types = in.createStringArrayList();
+        vicinity = in.readString();
+    }
+
+    public static final Creator<Result> CREATOR = new Creator<Result>() {
+        @Override
+        public Result createFromParcel(Parcel in) {
+            return new Result(in);
+        }
+
+        @Override
+        public Result[] newArray(int size) {
+            return new Result[size];
+        }
+    };
 
     /**
      * 
@@ -284,4 +311,37 @@ public class Result {
         this.vicinity = vicinity;
     }
 
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeParcelable(geometry,flags);
+        dest.writeString(icon);
+        dest.writeString(id);
+        dest.writeString(name);
+        dest.writeString(placeId);
+        dest.writeString(reference);
+        dest.writeString(scope);
+        dest.writeString(vicinity);
+
+
+
+
+
+        //dest.writeStringArray(types.toArray().toString());
+
+//        geometry = in.readParcelable(Geometry.class.getClassLoader());
+//        icon = in.readString();
+//        id = in.readString();
+//        name = in.readString();
+//        placeId = in.readString();
+//        reference = in.readString();
+//        scope = in.readString();
+//        types = in.createStringArrayList();
+//        vicinity = in.readString();
+    }
 }

@@ -119,15 +119,17 @@ public class GooglePlaceResultFragment extends Fragment {
 
     @Subscribe
     public void onEvent(KeywordSubmitEvent event) {
+        String currentLocation=event.getCurrentLocation();
         GoogleApi googleApi = GooglePlaceServiceGenerator.createService(GoogleApi.class);
-        Call<LocationResponse> call = googleApi.searchVenue("10.7960682,106.6760491","500",event.getmQuery(),KEY);
+        Call<LocationResponse> call = googleApi.searchVenue(currentLocation,"500",event.getmQuery(),KEY);
         call.enqueue(new Callback<LocationResponse>() {
             @Override
             public void onResponse(Call<LocationResponse> call, Response<LocationResponse> response) {
                 Log.d("Success" , String.valueOf(response.body().getResults().size()));
                 resultList.clear();
                 resultList.addAll(response.body().getResults());
-                //        getPhoto();
+              //  mAdapter = new GooglePlaceResultRecyclerViewAdapter(resultList, mListener,getActivity());
+                //recyclerView.setAdapter(mAdapter);
                 mAdapter.notifyDataSetChanged();
 
             }

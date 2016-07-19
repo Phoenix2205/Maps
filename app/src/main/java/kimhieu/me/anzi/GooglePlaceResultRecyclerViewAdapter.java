@@ -2,11 +2,14 @@ package kimhieu.me.anzi;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.bumptech.glide.Glide;
 
 import java.util.List;
 
@@ -41,17 +44,26 @@ public class GooglePlaceResultRecyclerViewAdapter extends RecyclerView.Adapter<G
         //holder.mItem = mValues.get(position);
         holder.mIdView.setText(mValues.get(position).getName());
         holder.mContentView.setText(mValues.get(position).getVicinity());
-
-        holder.mView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (null != mListener) {
-                    // Notify the active callbacks interface (the activity, if the
-                    // fragment is attached to one) that an item has been selected.
-                    mListener.onListFragmentInteraction(holder.mItem);
-                }
+        if(mValues.get(position).getPhotos()!=null) {
+            if(mValues.get(position).getPhotos().size()!=0) {
+                String url = mValues.get(position).getPhotos().get(0).getUrl();
+                String photopref=mValues.get(position).getPhotos().get(0).getPhotoReference();
+                Log.d("google photo pref",photopref);
+                Log.d("google photo",url);
+                Glide.with(context).load(url).into(holder.imageView);
             }
-        });
+        }
+
+//        holder.mView.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if (null != mListener) {
+//                    // Notify the active callbacks interface (the activity, if the
+//                    // fragment is attached to one) that an item has been selected.
+//                    mListener.onListFragmentInteraction(holder.mItem);
+//                }
+//            }
+//        });
     }
 
     @Override
@@ -63,7 +75,6 @@ public class GooglePlaceResultRecyclerViewAdapter extends RecyclerView.Adapter<G
         public final View mView;
         public final TextView mIdView;
         public final TextView mContentView;
-        public DummyItem mItem;
         public final ImageView imageView;
 
         public ViewHolder(View view) {

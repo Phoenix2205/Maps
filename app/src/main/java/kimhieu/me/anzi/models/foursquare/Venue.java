@@ -67,6 +67,7 @@ public class Venue implements Parcelable {
         name = in.readString();
         referralId = in.readString();
         location = in.readParcelable(Location.class.getClassLoader());
+        photo=in.readParcelable(Photos.class.getClassLoader());
     }
 
     public static final Creator<Venue> CREATOR = new Creator<Venue>() {
@@ -262,5 +263,7 @@ public class Venue implements Parcelable {
         parcel.writeString(name);
         parcel.writeString(referralId);
         parcel.writeParcelable(location, i);
+        parcel.writeParcelable(photo,i);
+
     }
 }

@@ -14,5 +14,7 @@ public interface GoogleApi {
                                        @Query("radius") String radius,
                                        @Query("name") String name,
                                        @Query("key")String key);
+
+
     //nearbysearch/json?location=-33.8670522,151.1957362&radius=500&type=restaurant&name=cruise&key=YOUR_API_KEY
 }

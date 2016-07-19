@@ -33,7 +33,7 @@ import retrofit2.Response;
  * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
  * interface.
  */
-public class FoursquareResultFragment extends Fragment {
+public class FoursquareResultFragment extends Fragment   {
 
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
@@ -44,6 +44,7 @@ public class FoursquareResultFragment extends Fragment {
     public List<Venue> venueList = new ArrayList<>();
     private FoursquareResultRecyclerViewAdapter mAdapter;
     private String APIversion="20130815";
+
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
@@ -92,8 +93,9 @@ public class FoursquareResultFragment extends Fragment {
 
     @Subscribe
     public void onEvent(KeywordSubmitEvent event) {
+        String curentLocation=event.getCurrentLocation();
         foursquareApi = FoursquareServiceGenerator.createService(FoursquareApi.class);
-        Call<FoursquareResponse> call = foursquareApi.searchVenue("20130815", "10.7960682,106.6760491", event.getmQuery());
+        Call<FoursquareResponse> call = foursquareApi.searchVenue("20130815",curentLocation, event.getmQuery());
         call.enqueue(new Callback<FoursquareResponse>() {
             @Override
             public void onResponse(Call<FoursquareResponse> call, Response<FoursquareResponse> response) {
@@ -101,7 +103,6 @@ public class FoursquareResultFragment extends Fragment {
                 venueList.clear();
                 venueList.addAll(response.body().getResponse().getVenues());
                 getPhoto();
-
 
             }
 
@@ -126,7 +127,10 @@ public class FoursquareResultFragment extends Fragment {
             @Override
             public void onResponse(Call<PhotoResponse> call, Response<PhotoResponse> response) {
                 Log.i("Get Photo",String.valueOf(response.body().getResponse().getPhotos().getCount()));
-                venueList.get(pos).setPhoto(response.body().getResponse().getPhotos());
+                if(response.body()!=null)
+                    if(response.body().getResponse()!=null)
+                        if(response.body().getResponse().getPhotos()!=null)
+                            venueList.get(pos).setPhoto(response.body().getResponse().getPhotos());
                 mAdapter.notifyDataSetChanged();
             }
 
@@ -136,7 +140,6 @@ public class FoursquareResultFragment extends Fragment {
             }
         });
     }
-
 
 
     @Override
@@ -164,4 +167,6 @@ public class FoursquareResultFragment extends Fragment {
         EventBus.getDefault().unregister(this);
         super.onStop();
     }
+
+
 }

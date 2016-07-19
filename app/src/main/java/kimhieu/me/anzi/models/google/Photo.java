@@ -22,6 +22,24 @@ public class Photo {
     @SerializedName("width")
     @Expose
     private Integer width;
+    private String size="maxwidth=400";//+getWidth().toString()+AMPERAND+"maxheight="+getHeight().toString();
+    private String apiPref="photoreference="+getPhotoReference();
+    private String key="key="+KEY;
+    private static final String API="https://maps.googleapis.com/maps/api/place/photo?";
+    private static final String KEY="AIzaSyB3g3k8Hsc85LbMvV2wlddNY2Fw3Dj0adw";
+    private static final String AMPERAND="&";
+
+    public String getUrl() {
+        //return url= API+size+AMPERAND+apiPref+AMPERAND+key;
+        return url=API+size+AMPERAND+"photoreference="+photoReference+AMPERAND+"key="+KEY;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    private String url;
+
 
     /**
      * 
@@ -94,5 +112,7 @@ public class Photo {
     public void setWidth(Integer width) {
         this.width = width;
     }
+
+
 
 }

@@ -1,11 +1,14 @@
 
 package kimhieu.me.anzi.models.foursquare_photo;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 
-public class Item_ {
+public class Item_ implements Parcelable{
 
     @SerializedName("id")
     @Expose
@@ -40,8 +43,29 @@ public class Item_ {
 
     private String size="original";
 
+    protected Item_(Parcel in) {
+        id = in.readString();
+        prefix = in.readString();
+        suffix = in.readString();
+        visibility = in.readString();
+        size = in.readString();
+        url = in.readString();
+    }
+
+    public static final Creator<Item_> CREATOR = new Creator<Item_>() {
+        @Override
+        public Item_ createFromParcel(Parcel in) {
+            return new Item_(in);
+        }
+
+        @Override
+        public Item_[] newArray(int size) {
+            return new Item_[size];
+        }
+    };
+
     public String getUrl() {
-       return  getPrefix()+size+suffix;
+       return  prefix+"original"+suffix;
     }
 
     public void setUrl(String url) {
@@ -110,7 +134,7 @@ public class Item_ {
      *     The prefix
      */
     public String getPrefix() {
-        return prefix=prefix.substring(0,prefix.length()-1);
+        return prefix;
     }
 
     /**
@@ -230,4 +254,18 @@ public class Item_ {
         this.visibility = visibility;
     }
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(id);
+        dest.writeString(prefix);
+        dest.writeString(suffix);
+        dest.writeString(visibility);
+        dest.writeString(size);
+        dest.writeString(url);
+    }
 }

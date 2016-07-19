@@ -1,6 +1,8 @@
 package kimhieu.me.anzi;
 
 import android.content.Context;
+import android.content.Intent;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -39,12 +41,18 @@ public class FoursquareResultRecyclerViewAdapter extends RecyclerView.Adapter<Fo
     }
 
     @Override
-    public void onBindViewHolder(final ViewHolder holder, int position) {
+    public void onBindViewHolder(final ViewHolder holder, final int position) {
         holder.mItem = mValues.get(position);
         holder.mIdView.setText(mValues.get(position).getName());
         holder.mContentView.setText(mValues.get(position).getLocation().getFormattedAddress().toString());
-        if(mValues.get(position).getPhoto().getItems().size()!=0)
-        Glide.with(context).load(mValues.get(position).getPhoto().getItems().get(0).getUrl()).into(holder.imageView);
+        if(mValues.get(position).getPhoto()!=null)
+                if(mValues.get(position).getPhoto().getItems()!=null)
+                    if(mValues.get(position).getPhoto().getItems().size()!=0) {
+
+                        String url=mValues.get(position).getPhoto().getItems().get(0).getUrl();
+
+                        Glide.with(context).load(url).into(holder.imageView);
+                    }
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -56,7 +64,14 @@ public class FoursquareResultRecyclerViewAdapter extends RecyclerView.Adapter<Fo
             }
         });
 
-
+        holder.cardView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context,LocationDetailActivity.class);
+                intent.putExtra("LocationFoursquare",mValues.get(position));
+                context.startActivity(intent);
+            }
+        });
     }
 
     @Override
@@ -69,6 +84,7 @@ public class FoursquareResultRecyclerViewAdapter extends RecyclerView.Adapter<Fo
         public final TextView mIdView;
         public final TextView mContentView;
         public final ImageView imageView;
+        public final CardView cardView;
         public Venue mItem;
 
         public ViewHolder(View view) {
@@ -77,6 +93,7 @@ public class FoursquareResultRecyclerViewAdapter extends RecyclerView.Adapter<Fo
             mIdView = (TextView) view.findViewById(R.id.foursquare_text_view_name);
             mContentView = (TextView) view.findViewById(R.id.foursquare_text_view_address);
             imageView=(ImageView)view.findViewById(R.id.foursquare_image_view_place);
+            cardView=(CardView)view.findViewById(R.id.card_view_foursquare);
         }
 
         @Override
