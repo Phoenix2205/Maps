@@ -12,26 +12,26 @@ import com.bumptech.glide.Glide;
 import java.util.List;
 
 import kimhieu.me.anzi.R;
-import kimhieu.me.anzi.models.foursquare_photo.Item_;
+import kimhieu.me.anzi.models.google.Photo;
 
 /**
- * Created by SONY on 6/11/2016.
+ * Created by SONY on 7/20/2016.
  */
-public class ImageSliderAdapter extends PagerAdapter {
+public class ImageSliderAdapterGoogle extends PagerAdapter {
     Context context;
+    List<Photo>imageListGoogle;
 
-    //int[] imageList;
-    List<Item_>imageList;
-    public ImageSliderAdapter(Context context, List<Item_>imageList) {
+    public ImageSliderAdapterGoogle(Context context, List<Photo>imageList) {
         this.context = context;
-        //this.imageList = imageList;
-        this.imageList=imageList;
+        this.imageListGoogle =imageList;
     }
+
+
 
     @Override
     public int getCount() {
-        return imageList.size();
-        //return imageList.length;
+        return imageListGoogle.size();
+
     }
 
     @Override
@@ -43,8 +43,9 @@ public class ImageSliderAdapter extends PagerAdapter {
     public Object instantiateItem(ViewGroup container, int position) {
         View view = LayoutInflater.from(container.getContext()).inflate(R.layout.view_pager_image, container, false);
         ImageView imageView = (ImageView) view.findViewById(R.id.imageView);
-       // Glide.with(context).load(imageList[position]).into(imageView);
-        Glide.with(context).load(imageList.get(position).getUrl()).into(imageView);
+        if(imageListGoogle.size()!=0)
+        Glide.with(context).load(imageListGoogle.get(position).getUrl()).into(imageView);
+        else  Glide.with(context).load(imageListGoogle.get(0).getUrl()).into(imageView);
         container.addView(view);
         return view;
     }
@@ -54,4 +55,5 @@ public class ImageSliderAdapter extends PagerAdapter {
         (container).removeView((View) object);
     }
 }
+
 

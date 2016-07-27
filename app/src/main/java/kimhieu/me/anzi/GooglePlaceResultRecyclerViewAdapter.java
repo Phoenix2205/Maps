@@ -1,6 +1,8 @@
 package kimhieu.me.anzi;
 
 import android.content.Context;
+import android.content.Intent;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -40,7 +42,7 @@ public class GooglePlaceResultRecyclerViewAdapter extends RecyclerView.Adapter<G
     }
 
     @Override
-    public void onBindViewHolder(final ViewHolder holder, int position) {
+    public void onBindViewHolder(final ViewHolder holder, final int position) {
         //holder.mItem = mValues.get(position);
         holder.mIdView.setText(mValues.get(position).getName());
         holder.mContentView.setText(mValues.get(position).getVicinity());
@@ -53,6 +55,15 @@ public class GooglePlaceResultRecyclerViewAdapter extends RecyclerView.Adapter<G
                 Glide.with(context).load(url).into(holder.imageView);
             }
         }
+
+        holder.cardView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context,LocationDetailActivity.class);
+                intent.putExtra("LocationGoogle",mValues.get(position));
+                context.startActivity(intent);
+            }
+        });
 
 //        holder.mView.setOnClickListener(new View.OnClickListener() {
 //            @Override
@@ -76,6 +87,7 @@ public class GooglePlaceResultRecyclerViewAdapter extends RecyclerView.Adapter<G
         public final TextView mIdView;
         public final TextView mContentView;
         public final ImageView imageView;
+        public final CardView cardView;
 
         public ViewHolder(View view) {
             super(view);
@@ -83,6 +95,7 @@ public class GooglePlaceResultRecyclerViewAdapter extends RecyclerView.Adapter<G
             mIdView = (TextView) view.findViewById(R.id.google_text_view_name);
             mContentView = (TextView) view.findViewById(R.id.google_text_view_address);
             imageView=(ImageView)view.findViewById(R.id.google_image_view_place);
+            cardView=(CardView)view.findViewById(R.id.card_view_google);
         }
 
         @Override

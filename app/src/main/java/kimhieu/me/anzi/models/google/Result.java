@@ -4,9 +4,12 @@ package kimhieu.me.anzi.models.google;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,7 +39,7 @@ public class Result implements Parcelable{
     private String placeId;
     @SerializedName("price_level")
     @Expose
-    private Integer priceLevel;
+    private int priceLevel;
     @SerializedName("rating")
     @Expose
     private Double rating;
@@ -63,6 +66,9 @@ public class Result implements Parcelable{
         scope = in.readString();
         //types = in.createStringArrayList();
         vicinity = in.readString();
+        openingHours=in.readParcelable(OpeningHours.class.getClassLoader());
+        in.readList(photos,Photo.class.getClassLoader());
+      //  priceLevel=in.readInt();
     }
 
     public static final Creator<Result> CREATOR = new Creator<Result>() {
@@ -327,21 +333,25 @@ public class Result implements Parcelable{
         dest.writeString(reference);
         dest.writeString(scope);
         dest.writeString(vicinity);
+        dest.writeParcelable(openingHours,flags);
+        dest.writeList(photos);
+      //  dest.writeInt(priceLevel);
+    }
 
+    public String distanceToVenue(LatLng origin)
+    {
+        android.location.Location originLocation = new  android.location.Location("origin");
 
+        originLocation.setLatitude(origin.latitude);
+        originLocation.setLongitude(origin.longitude);
 
+        android.location.Location destLocation = new  android.location.Location("destination");
 
-
-        //dest.writeStringArray(types.toArray().toString());
-
-//        geometry = in.readParcelable(Geometry.class.getClassLoader());
-//        icon = in.readString();
-//        id = in.readString();
-//        name = in.readString();
-//        placeId = in.readString();
-//        reference = in.readString();
-//        scope = in.readString();
-//        types = in.createStringArrayList();
-//        vicinity = in.readString();
+        destLocation.setLatitude(geometry.getLocation().getLat());
+        destLocation.setLongitude(geometry.getLocation().getLng());
+        DecimalFormat df = new DecimalFormat("#.##");
+        df.setRoundingMode(RoundingMode.CEILING);
+        return df.format(originLocation.distanceTo(destLocation));
+      //  return originLocation.distanceTo(destLocation);
     }
 }

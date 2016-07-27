@@ -4,9 +4,12 @@ package kimhieu.me.anzi.models.foursquare;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -61,6 +64,7 @@ public class Venue implements Parcelable {
 
     private Photos photo;
 
+    public Venue (){}
 
     protected Venue(Parcel in) {
         id = in.readString();
@@ -255,7 +259,22 @@ public class Venue implements Parcelable {
         return 0;
     }
 
+    public String distanceToVenue(LatLng origin)
+    {
+        android.location.Location originLocation = new  android.location.Location("origin");
 
+        originLocation.setLatitude(origin.latitude);
+        originLocation.setLongitude(origin.longitude);
+
+        android.location.Location destLocation = new  android.location.Location("destination");
+
+        destLocation.setLatitude(location.getLat());
+        destLocation.setLongitude(location.getLng());
+        DecimalFormat df = new DecimalFormat("#.##");
+        df.setRoundingMode(RoundingMode.CEILING);
+        return df.format(originLocation.distanceTo(destLocation));
+        //  return originLocation.distanceTo(destLocation);
+    }
 
     @Override
     public void writeToParcel(Parcel parcel, int i) {

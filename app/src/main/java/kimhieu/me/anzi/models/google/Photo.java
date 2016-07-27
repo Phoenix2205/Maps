@@ -1,6 +1,9 @@
 
 package kimhieu.me.anzi.models.google;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -8,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class Photo {
+public class Photo implements Parcelable {
 
     @SerializedName("height")
     @Expose
@@ -29,9 +32,30 @@ public class Photo {
     private static final String KEY="AIzaSyB3g3k8Hsc85LbMvV2wlddNY2Fw3Dj0adw";
     private static final String AMPERAND="&";
 
+    protected Photo(Parcel in) {
+        htmlAttributions = in.createStringArrayList();
+        photoReference = in.readString();
+        size = in.readString();
+        apiPref = in.readString();
+        key = in.readString();
+        url = in.readString();
+    }
+
+    public static final Creator<Photo> CREATOR = new Creator<Photo>() {
+        @Override
+        public Photo createFromParcel(Parcel in) {
+            return new Photo(in);
+        }
+
+        @Override
+        public Photo[] newArray(int size) {
+            return new Photo[size];
+        }
+    };
+
     public String getUrl() {
         //return url= API+size+AMPERAND+apiPref+AMPERAND+key;
-        return url=API+size+AMPERAND+"photoreference="+photoReference+AMPERAND+"key="+KEY;
+        return url=API+"maxwidth=400"+AMPERAND+"photoreference="+photoReference+AMPERAND+"key="+KEY;
     }
 
     public void setUrl(String url) {
@@ -114,5 +138,18 @@ public class Photo {
     }
 
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
 
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeStringList(htmlAttributions);
+        dest.writeString(photoReference);
+        dest.writeString(size);
+        dest.writeString(apiPref);
+        dest.writeString(key);
+        dest.writeString(url);
+    }
 }

@@ -127,6 +127,7 @@ public class FoursquareResultFragment extends Fragment   {
             @Override
             public void onResponse(Call<PhotoResponse> call, Response<PhotoResponse> response) {
                 Log.i("Get Photo",String.valueOf(response.body().getResponse().getPhotos().getCount()));
+
                 if(response.body()!=null)
                     if(response.body().getResponse()!=null)
                         if(response.body().getResponse().getPhotos()!=null)
